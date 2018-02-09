@@ -6,6 +6,7 @@ Projet de COMP - L3 INFO g1.2
 ## Fichiers du projet
 
 ### Fichiers sources (/src)
+* **projet.java** : Fichier .java principal à exécuter
 * **PtGen.java** : Points de génération
 * **projet.g** : Grammaire
 
