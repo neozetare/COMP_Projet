@@ -1,0 +1,26 @@
+1 	reserver 2
+2
+20 	lirent
+4	affecterg 0
+0
+20	lirent
+4	affecterg 1
+1
+3	contenug 0
+0
+2	empiler 0
+0
+12	eg
+18	bsifaux 20
+20
+2	empiler	10
+10
+4	affecterg 0
+0
+3	contenug 1
+1
+3 	contenug 0
+0
+17	div
+22	ecrent
+24	arret
