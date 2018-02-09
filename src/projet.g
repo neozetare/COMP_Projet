@@ -70,8 +70,8 @@ consts  : 'const' ( ident  '=' valeur  ptvg  )+
 vars  : 'var' ( type ident ( ','  ident  )* ptvg  )+
   ;
   
-type  : 'ent'
-  |     'bool'
+type  : 'ent' {PtGen.pt(1);}
+  |     'bool' {PtGen.pt(2);}
   ;
   
 decprocs: (decproc ptvg)+

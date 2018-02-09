@@ -192,6 +192,13 @@ public class PtGen {
 			initialisations();
 			break;
 		
+		case 1:
+			Ecriture.ecrireStringln("ent");
+			break;
+		case 2:
+			Ecriture.ecrireStringln("bool");
+			break;
+		
 		default:
 			System.out
 					.println("Point de generation non prevu dans votre liste");
