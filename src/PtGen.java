@@ -27,7 +27,6 @@ import java.io.*;
 // (verifications semantiques + production du code objet)
 
 public class PtGen {
-    
 
     // constantes manipulees par le compilateur
     // ----------------------------------------
@@ -102,11 +101,15 @@ public class PtGen {
      
     // autres variables fournies
     // -------------------------
-    public static String trinome="RAZAFINDRALAMBO MARTIN PHAM"; // MERCI de renseigner ici un nom pour le trinome, constitue de exclusivement de lettres
+    public static String trinome="MARTIN_RAZA_PHAM"; // MERCI de renseigner ici un nom pour le trinome, constitue de exclusivement de lettres
     
     private static int tCour; // type de l'expression compilee
     private static int vCour; // valeur de l'expression compilee le cas echeant
   
+    // Variables du trinôme
+    
+    static int valeurLue, typeDeclare,
+    tabSymb_nombreVarGlobales;
    
     // Dï¿½finition de la table des symboles
     //
@@ -180,30 +183,70 @@ public class PtGen {
 	
 		// initialisation du type de l'expression courante
 		tCour = NEUTRE;
+		
+		tabSymb_nombreVarGlobales = 0;
 
 	} // initialisations
 
 	// code des points de generation A COMPLETER
 	// -----------------------------------------
-	public static void pt(int numGen) {
-	
+	public static void pt(int numGen) {	
 		switch (numGen) {
-		case 0:
-			initialisations();
-			break;
-		
-		case 1:
-			Ecriture.ecrireStringln("ent");
-			break;
-		case 2:
-			Ecriture.ecrireStringln("bool");
-			break;
-		
-		default:
-			System.out
-					.println("Point de generation non prevu dans votre liste");
-			break;
-
+			case 0:
+				initialisations();
+				break;
+				
+			case 10:
+				afftabSymb();
+				po.constObj();
+				po.constGen();
+				break;
+				
+			case 310:
+				placeIdent(UtilLex.numId, CONSTANTE, typeDeclare, valeurLue);
+				break;
+				
+			case 340:
+				placeIdent(UtilLex.numId, VARGLOBALE, typeDeclare, tabSymb_nombreVarGlobales);
+				tabSymb_nombreVarGlobales++;
+				break;
+				
+			case 341:
+				po.produire(RESERVER);
+				po.produire(tabSymb_nombreVarGlobales);
+				break;
+				
+			case 370:
+				typeDeclare = ENT;
+				break;
+				
+			case 380:
+				typeDeclare = BOOL;
+				break;
+				
+			case 1470:
+				typeDeclare = ENT;
+				valeurLue = UtilLex.valNb;
+				break;
+				
+			case 1490:
+				typeDeclare = ENT;
+				valeurLue = - UtilLex.valNb;
+				break;
+				
+			case 1500:
+				typeDeclare = BOOL;
+				valeurLue = VRAI;
+				break;
+				
+			case 1510:
+				typeDeclare = BOOL;
+				valeurLue = FAUX;
+				break;
+			
+			default:
+				System.out.println("Point de generation non prevu dans votre liste");
+				break;
 		}
 	}
 }
