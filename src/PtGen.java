@@ -108,8 +108,7 @@ public class PtGen {
   
     // Variables du trinôme
     
-    static int valeurLue, typeDeclare,
-    tabSymb_nombreVarGlobales;
+    static int tabSymb_nombreVarGlobales;
    
     // Dï¿½finition de la table des symboles
     //
@@ -196,18 +195,24 @@ public class PtGen {
 				initialisations();
 				break;
 				
+			// unite
+				
 			case 10:
 				afftabSymb();
 				po.constObj();
 				po.constGen();
 				break;
 				
+			// consts
+				
 			case 310:
-				placeIdent(UtilLex.numId, CONSTANTE, typeDeclare, valeurLue);
+				placeIdent(UtilLex.numId, CONSTANTE, tCour, vCour);
 				break;
 				
+			// vars
+				
 			case 340:
-				placeIdent(UtilLex.numId, VARGLOBALE, typeDeclare, tabSymb_nombreVarGlobales);
+				placeIdent(UtilLex.numId, VARGLOBALE, tCour, tabSymb_nombreVarGlobales);
 				tabSymb_nombreVarGlobales++;
 				break;
 				
@@ -216,32 +221,130 @@ public class PtGen {
 				po.produire(tabSymb_nombreVarGlobales);
 				break;
 				
+			// type
+				
 			case 370:
-				typeDeclare = ENT;
+				tCour = ENT;
 				break;
 				
 			case 380:
-				typeDeclare = BOOL;
+				tCour = BOOL;
 				break;
+				
+			// expression
+				
+			case 1110:
+				verifBool();
+				break;
+			case 1111:
+				po.produire(OU);
+				break;
+				
+			// exp1
+				
+			case 1131:
+				po.produire(ET);
+				break;
+				
+			// exp 2
+				
+			case 1160:
+				verifBool();
+				po.produire(NON);
+				break;
+				
+			// exp 3
+				
+			case 1200:
+				verifEnt();
+				break;
+				
+			case 1201:
+				tCour = BOOL;
+				break;
+				
+			case 1211:
+				po.produire(EG);
+				break;
+			case 1221:
+				po.produire(DIFF);
+				break;
+			case 1231:
+				po.produire(SUP);
+				break;
+			case 1241:
+				po.produire(SUPEG);
+				break;
+			case 1251:
+				po.produire(INF);
+				break;
+			case 1261:
+				po.produire(INFEG);
+				break;
+				
+			// exp 4
+
+			case 1310:
+				po.produire(ADD);
+				break;
+			case 1320:
+				po.produire(SOUS);
+				break;
+				
+			// exp 5
+
+			case 1370:
+				po.produire(MUL);
+				break;
+			case 1380:
+				po.produire(DIV);
+				break;
+				
+			// primaire
+				
+			case 1420:
+				po.produire(EMPILER);
+				po.produire(vCour);
+				break;
+				
+			case 1430:
+				vCour = presentIdent(1);
+				if (vCour == 0)
+					UtilLex.messErr(UtilLex.repId(UtilLex.numId) + " non déclaré");
+				tCour = tabSymb[vCour].type;
+
+				switch (tabSymb[vCour].categorie) {
+					case CONSTANTE:
+						po.produire(EMPILER);
+						break;
+					case VARGLOBALE:
+						po.produire(CONTENUG);
+						break;
+					default:
+						UtilLex.messErr("Action non valide");
+						break;
+				}
+				po.produire(tabSymb[vCour].info);
+				break;
+				
+			// valeur
 				
 			case 1470:
-				typeDeclare = ENT;
-				valeurLue = UtilLex.valNb;
+				tCour = ENT;
+				vCour = UtilLex.valNb;
 				break;
-				
 			case 1490:
-				typeDeclare = ENT;
-				valeurLue = - UtilLex.valNb;
+				tCour = ENT;
+				vCour = - UtilLex.valNb;
 				break;
 				
 			case 1500:
-				typeDeclare = BOOL;
-				valeurLue = VRAI;
+				tCour = BOOL;
+				vCour = VRAI;
 				break;
-				
 			case 1510:
-				typeDeclare = BOOL;
-				valeurLue = FAUX;
+				tCour = BOOL;
+				vCour = FAUX;
 				break;
 			
 			default:

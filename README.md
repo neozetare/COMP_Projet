@@ -25,7 +25,7 @@ Projet de COMP - L3 INFO g1.2
 A chaque modification de la grammaire *projet.g*, lancer la commande `/src g2java projet.g` puis rafraichir le projet Java.
 
 ### Notation des points de générations
-Un point de génération a pour numéro son numéro de ligne dans `/grammar.txt` * 10.
+Un point de génération a pour numéro son numéro de ligne dans `/grammar.g` * 10 à quelques unités près.
 
 ### Méthodes et attributs utiles
 Voir `/src/PtGen.java`.
