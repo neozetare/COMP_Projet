@@ -22,7 +22,7 @@ Projet de COMP - L3 INFO g1.2
 ## Notes
 
 ### Génération avec ANTLR
-A chaque modification de la grammaire *projet.g*, lancer la commande `/src g2java projet.g`.
+A chaque modification de la grammaire *projet.g*, lancer la commande `/src g2java projet.g` puis rafraichir le projet Java.
 
 ### Méthodes et attributs utiles
 Voir `/src/PtGen.java`.
