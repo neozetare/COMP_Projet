@@ -24,5 +24,8 @@ Projet de COMP - L3 INFO g1.2
 ### Génération avec ANTLR
 A chaque modification de la grammaire *projet.g*, lancer la commande `/src g2java projet.g` puis rafraichir le projet Java.
 
+### Notation des points de générations
+Un point de génération a pour numéro son numéro de ligne dans `/grammar.txt` * 10.
+
 ### Méthodes et attributs utiles
 Voir `/src/PtGen.java`.
