@@ -108,7 +108,7 @@ public class PtGen {
   
     // Variables du trinôme
     
-    static int tabSymb_nombreVarGlobales;
+    static int tabSymb_nombreVarGlobales, tabSymb_iCour;
    
     // Dï¿½finition de la table des symboles
     //
@@ -206,12 +206,16 @@ public class PtGen {
 			// consts
 				
 			case 310:
+				if (presentIdent(1) != 0)
+					UtilLex.messErr("Identificateur \"" + UtilLex.repId(UtilLex.numId) + "\" déjà utilisé");
 				placeIdent(UtilLex.numId, CONSTANTE, tCour, vCour);
 				break;
 				
 			// vars
 				
 			case 340:
+				if (presentIdent(1) != 0)
+					UtilLex.messErr("Identificateur \"" + UtilLex.repId(UtilLex.numId) + "\" déjà utilisé");
 				placeIdent(UtilLex.numId, VARGLOBALE, tCour, tabSymb_nombreVarGlobales);
 				tabSymb_nombreVarGlobales++;
 				break;
@@ -229,6 +233,48 @@ public class PtGen {
 				
 			case 380:
 				tCour = BOOL;
+				break;
+				
+			// lecture
+				
+			case 920:
+				tabSymb_iCour = presentIdent(1);
+				if (tabSymb_iCour == 0)
+					UtilLex.messErr("Identificateur \"" + UtilLex.repId(UtilLex.numId) + "\" non déclaré");
+
+				if (tabSymb[tabSymb_iCour].categorie != VARGLOBALE)
+						UtilLex.messErr("Variable attendue");
+				
+				switch (tabSymb[tabSymb_iCour].type) {
+					case BOOL:
+						po.produire(LIREBOOL);
+						break;
+					case ENT:
+						po.produire(LIRENT);
+						break;
+					default:
+						UtilLex.messErr("Type d'identificateur invalide");
+						break;
+				}
+				
+				po.produire(AFFECTERG);
+				po.produire(tabSymb[tabSymb_iCour].info);
+				break;
+				
+			// ecriture
+				
+			case 950:
+				switch (tCour) {
+					case BOOL:
+						po.produire(ECRBOOL);
+						break;
+					case ENT:
+						po.produire(ECRENT);
+						break;
+					default:
+						UtilLex.messErr("Type d'expression invalide");
+						break;
+				}
 				break;
 				
 			// expression
@@ -308,12 +354,12 @@ public class PtGen {
 				break;
 				
 			case 1430:
-				vCour = presentIdent(1);
-				if (vCour == 0)
+				tabSymb_iCour = presentIdent(1);
+				if (tabSymb_iCour == 0)
 					UtilLex.messErr(UtilLex.repId(UtilLex.numId) + " non déclaré");
-				tCour = tabSymb[vCour].type;
+				tCour = tabSymb[tabSymb_iCour].type;
 
-				switch (tabSymb[vCour].categorie) {
+				switch (tabSymb[tabSymb_iCour].categorie) {
 					case CONSTANTE:
 						po.produire(EMPILER);
 						break;
@@ -321,10 +367,10 @@ public class PtGen {
 						po.produire(CONTENUG);
 						break;
 					default:
-						UtilLex.messErr("Action non valide");
+						UtilLex.messErr("Catégorie d'identificateur invalide");
 						break;
 				}
-				po.produire(tabSymb[vCour].info);
+				po.produire(tabSymb[tabSymb_iCour].info);
 				break;
 				
 			// valeur
