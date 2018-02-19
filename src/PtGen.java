@@ -108,7 +108,8 @@ public class PtGen {
   
     // Variables du trinôme
     
-    static int tabSymb_nombreVarGlobales, tabSymb_iCour;
+    static int tabSymb_nombreVarGlobales, tabSymb_iCour,
+    	tabSymb_iAAffecter;
    
     // Dï¿½finition de la table des symboles
     //
@@ -241,7 +242,6 @@ public class PtGen {
 				tabSymb_iCour = presentIdent(1);
 				if (tabSymb_iCour == 0)
 					UtilLex.messErr("Identificateur \"" + UtilLex.repId(UtilLex.numId) + "\" non déclaré");
-
 				if (tabSymb[tabSymb_iCour].categorie != VARGLOBALE)
 						UtilLex.messErr("Variable attendue");
 				
@@ -275,6 +275,32 @@ public class PtGen {
 						UtilLex.messErr("Type d'expression invalide");
 						break;
 				}
+				break;
+				
+			// affouappel
+				
+			case 990:
+				tabSymb_iAAffecter = presentIdent(1);
+				if (tabSymb_iAAffecter == 0)
+					UtilLex.messErr("Identificateur \"" + UtilLex.repId(UtilLex.numId) + "\" non déclaré");
+				if (tabSymb[tabSymb_iAAffecter].categorie != VARGLOBALE)
+					UtilLex.messErr("Variable attendue");
+				break;
+				
+			case 991:
+				switch (tabSymb[tabSymb_iAAffecter].type) {
+					case BOOL:
+						verifBool();
+						break;
+					case ENT:
+						verifEnt();
+						break;
+					default:
+						UtilLex.messErr("Type d'identificateur invalide");
+						break;
+				}
+				po.produire(AFFECTERG);
+				po.produire(tabSymb[tabSymb_iAAffecter].info);
 				break;
 				
 			// expression
