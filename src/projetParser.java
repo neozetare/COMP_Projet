@@ -1,4 +1,4 @@
-// $ANTLR 3.5.2 projet.g 2018-02-22 08:51:16
+// $ANTLR 3.5.2 projet.g 2018-02-22 09:22:32
 
 import java.io.IOException;
 import java.io.DataInputStream;
@@ -13,12 +13,12 @@ import java.util.ArrayList;
 @SuppressWarnings("all")
 public class projetParser extends Parser {
 	public static final String[] tokenNames = new String[] {
-		"<invalid>", "<EOR>", "<DOWN>", "<UP>", "COMMENT", "ID", "INT", "ML_COMMENT", 
-		"RC", "WS", "'('", "')'", "'*'", "'+'", "','", "'-'", "':'", "':='", "';'", 
-		"'<'", "'<='", "'<>'", "'='", "'>'", "'>='", "'alors'", "'aut'", "'bool'", 
-		"'cond'", "'const'", "'debut'", "'def'", "'div'", "'ecrire'", "'ent'", 
-		"'et'", "'faire'", "'fait'", "'faux'", "'fcond'", "'fin'", "'fixe'", "'fsi'", 
-		"'lire'", "'mod'", "'module'", "'non'", "'ou'", "'proc'", "'programme'", 
+		"<invalid>", "<EOR>", "<DOWN>", "<UP>", "COMMENT", "ID", "INT", "LIGNE", 
+		"ML_COMMENT", "WS", "'('", "')'", "'*'", "'+'", "','", "'-'", "':'", "':='", 
+		"';'", "'<'", "'<='", "'<>'", "'='", "'>'", "'>='", "'alors'", "'aut'", 
+		"'bool'", "'cond'", "'const'", "'debut'", "'def'", "'div'", "'ecrire'", 
+		"'ent'", "'et'", "'faire'", "'fait'", "'faux'", "'fcond'", "'fin'", "'fixe'", 
+		"'fsi'", "'lire'", "'mod'", "'module'", "'non'", "'ou'", "'proc'", "'programme'", 
 		"'ref'", "'si'", "'sinon'", "'ttq'", "'var'", "'vrai'"
 	};
 	public static final int EOF=-1;
@@ -71,8 +71,8 @@ public class projetParser extends Parser {
 	public static final int COMMENT=4;
 	public static final int ID=5;
 	public static final int INT=6;
-	public static final int ML_COMMENT=7;
-	public static final int RC=8;
+	public static final int LIGNE=7;
+	public static final int ML_COMMENT=8;
 	public static final int WS=9;
 
 	// delegates

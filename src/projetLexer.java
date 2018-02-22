@@ -1,4 +1,4 @@
-// $ANTLR 3.5.2 projet.g 2018-02-22 08:51:16
+// $ANTLR 3.5.2 projet.g 2018-02-22 09:22:32
 
 import org.antlr.runtime.*;
 import java.util.Stack;
@@ -57,8 +57,8 @@ public class projetLexer extends Lexer {
 	public static final int COMMENT=4;
 	public static final int ID=5;
 	public static final int INT=6;
-	public static final int ML_COMMENT=7;
-	public static final int RC=8;
+	public static final int LIGNE=7;
+	public static final int ML_COMMENT=8;
 	public static final int WS=9;
 
 	// delegates
@@ -1092,10 +1092,10 @@ public class projetLexer extends Lexer {
 		try {
 			int _type = INT;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// projet.g:208:5: ( ( '0' .. '9' )+ )
-			// projet.g:208:9: ( '0' .. '9' )+
+			// projet.g:208:7: ( ( '0' .. '9' )+ )
+			// projet.g:208:11: ( '0' .. '9' )+
 			{
-			// projet.g:208:9: ( '0' .. '9' )+
+			// projet.g:208:11: ( '0' .. '9' )+
 			int cnt2=0;
 			loop2:
 			while (true) {
@@ -1144,10 +1144,10 @@ public class projetLexer extends Lexer {
 		try {
 			int _type = WS;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// projet.g:209:5: ( ( ' ' | '\\t' | '\\r' )+ )
-			// projet.g:209:9: ( ' ' | '\\t' | '\\r' )+
+			// projet.g:209:7: ( ( ' ' | '\\t' | '\\r' )+ )
+			// projet.g:209:11: ( ' ' | '\\t' | '\\r' )+
 			{
-			// projet.g:209:9: ( ' ' | '\\t' | '\\r' )+
+			// projet.g:209:11: ( ' ' | '\\t' | '\\r' )+
 			int cnt3=0;
 			loop3:
 			while (true) {
@@ -1192,13 +1192,13 @@ public class projetLexer extends Lexer {
 	}
 	// $ANTLR end "WS"
 
-	// $ANTLR start "RC"
-	public final void mRC() throws RecognitionException {
+	// $ANTLR start "LIGNE"
+	public final void mLIGNE() throws RecognitionException {
 		try {
-			int _type = RC;
+			int _type = LIGNE;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// projet.g:210:5: ( '\\n' )
-			// projet.g:210:9: '\\n'
+			// projet.g:210:7: ( '\\n' )
+			// projet.g:210:11: '\\n'
 			{
 			match('\n'); 
 			UtilLex.incrementeLigne();skip();
@@ -1211,7 +1211,7 @@ public class projetLexer extends Lexer {
 			// do for sure before leaving
 		}
 	}
-	// $ANTLR end "RC"
+	// $ANTLR end "LIGNE"
 
 	// $ANTLR start "COMMENT"
 	public final void mCOMMENT() throws RecognitionException {
@@ -1373,7 +1373,7 @@ public class projetLexer extends Lexer {
 
 	@Override
 	public void mTokens() throws RecognitionException {
-		// projet.g:1:8: ( T__10 | T__11 | T__12 | T__13 | T__14 | T__15 | T__16 | T__17 | T__18 | T__19 | T__20 | T__21 | T__22 | T__23 | T__24 | T__25 | T__26 | T__27 | T__28 | T__29 | T__30 | T__31 | T__32 | T__33 | T__34 | T__35 | T__36 | T__37 | T__38 | T__39 | T__40 | T__41 | T__42 | T__43 | T__44 | T__45 | T__46 | T__47 | T__48 | T__49 | T__50 | T__51 | T__52 | T__53 | T__54 | T__55 | ID | INT | WS | RC | COMMENT | ML_COMMENT )
+		// projet.g:1:8: ( T__10 | T__11 | T__12 | T__13 | T__14 | T__15 | T__16 | T__17 | T__18 | T__19 | T__20 | T__21 | T__22 | T__23 | T__24 | T__25 | T__26 | T__27 | T__28 | T__29 | T__30 | T__31 | T__32 | T__33 | T__34 | T__35 | T__36 | T__37 | T__38 | T__39 | T__40 | T__41 | T__42 | T__43 | T__44 | T__45 | T__46 | T__47 | T__48 | T__49 | T__50 | T__51 | T__52 | T__53 | T__54 | T__55 | ID | INT | WS | LIGNE | COMMENT | ML_COMMENT )
 		int alt8=52;
 		alt8 = dfa8.predict(input);
 		switch (alt8) {
@@ -1721,21 +1721,21 @@ public class projetLexer extends Lexer {
 				}
 				break;
 			case 50 :
-				// projet.g:1:296: RC
+				// projet.g:1:296: LIGNE
 				{
-				mRC(); 
+				mLIGNE(); 
 
 				}
 				break;
 			case 51 :
-				// projet.g:1:299: COMMENT
+				// projet.g:1:302: COMMENT
 				{
 				mCOMMENT(); 
 
 				}
 				break;
 			case 52 :
-				// projet.g:1:307: ML_COMMENT
+				// projet.g:1:310: ML_COMMENT
 				{
 				mML_COMMENT(); 
 
@@ -1977,7 +1977,7 @@ public class projetLexer extends Lexer {
 		}
 		@Override
 		public String getDescription() {
-			return "1:1: Tokens : ( T__10 | T__11 | T__12 | T__13 | T__14 | T__15 | T__16 | T__17 | T__18 | T__19 | T__20 | T__21 | T__22 | T__23 | T__24 | T__25 | T__26 | T__27 | T__28 | T__29 | T__30 | T__31 | T__32 | T__33 | T__34 | T__35 | T__36 | T__37 | T__38 | T__39 | T__40 | T__41 | T__42 | T__43 | T__44 | T__45 | T__46 | T__47 | T__48 | T__49 | T__50 | T__51 | T__52 | T__53 | T__54 | T__55 | ID | INT | WS | RC | COMMENT | ML_COMMENT );";
+			return "1:1: Tokens : ( T__10 | T__11 | T__12 | T__13 | T__14 | T__15 | T__16 | T__17 | T__18 | T__19 | T__20 | T__21 | T__22 | T__23 | T__24 | T__25 | T__26 | T__27 | T__28 | T__29 | T__30 | T__31 | T__32 | T__33 | T__34 | T__35 | T__36 | T__37 | T__38 | T__39 | T__40 | T__41 | T__42 | T__43 | T__44 | T__45 | T__46 | T__47 | T__48 | T__49 | T__50 | T__51 | T__52 | T__53 | T__54 | T__55 | ID | INT | WS | LIGNE | COMMENT | ML_COMMENT );";
 		}
 	}
 

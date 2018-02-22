@@ -1,0 +1,39 @@
+boucle: 'ttq' (2) expression (3) 'faire' instruction 'fait' (4)
+
+case 2:
+	pileRep.empiler(po.getIpo() + 1);
+	break;
+case 3:
+	verifBool();
+	po.produire(BSIFAUX);
+	po.produire(0);
+	pileRep.empiler(po.getIpo());
+	break;
+case 4:
+	po.modifier(pileRep.depiler(), po.getIpo() + 1);
+	po.produire(BINCOND);
+	po.produire(pileRep.depiler());
+	break;
+	
+	
+inssi : 'si' expression {PtGen.pt(800);} 'alors'  instructions ('sinon' {PtGen.pt(801);} instructions)? 'fsi' {PtGen.pt(802);}
+				
+			//inssi
+				
+			case 800:
+				verifBool();
+				po.produire(BSIFAUX);
+				po.produire(0);
+				pileRep.empiler(po.getIpo());
+				break;
+
+			case 801:
+				po.produire(BINCOND);
+				po.produire(0);
+				po.modifier(pileRep.depiler(), po.getIpo() + 1);
+				pileRep.empiler(po.getIpo());
+				break;
+				
+			case 802:
+				po.modifier(pileRep.depiler(), po.getIpo() + 1);
+				break;
