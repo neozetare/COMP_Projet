@@ -1,5 +1,5 @@
 # COMP_Projet
-Projet de COMP - L3 INFO g1.2
+Projet de COMP - L3 INFO g1.2 - MARTIN\_RAZA\_PHAM
 
 ---
 
@@ -17,12 +17,12 @@ Projet de COMP - L3 INFO g1.2
 
 ### Jeux de tests (/)
 #### Jeux des profs
-* **DeclExp-TX.pro** : Jeux valides de déclaration et d'expressions
-* **ErrX-DeclExp.pro** : Jeux erronnés de déclaration et d'expressions
-* **polyPX+.pro** : Jeux du poly
-* **TDexoX.pro** : Jeux des TD
+* **DeclExp-T\*.pro** : Jeux valides de déclaration et d'expressions
+* **Err\*-DeclExp.pro** : Jeux erronnés de déclaration et d'expressions
+* **polyP\*.pro** : Jeux du poly
+* **TDexo\*.pro** : Jeux des TD
 #### Jeux persos
-* **Bases-TX.pro** : Jeux valides d'instructions de bases
+* **Bases-T\*.pro** : Jeux valides d'instructions de bases
 
 ---
 
