@@ -22,6 +22,7 @@ class projet {
 	public static String nomSourceComplet; // nom du source a compiler, avec son suffixe .pro 
 	
 	private static void UneCompilation (String nomDuSource ) {
+		nomDuSource = "test/"+nomDuSource;
 		try {
 			ANTLRFileStream input = new ANTLRFileStream(nomDuSource);
 			projetLexer lexer = new projetLexer(input);

@@ -6,26 +6,39 @@ Projet de COMP - L3 INFO g1.2
 ## Fichiers du projet
 
 ### Fichiers sources (/src)
-* **projet.java** : Fichier .java principal à exécuter
+* **projet.java** : Fichier .java principal à exécuter pour compiler
 * **PtGen.java** : Points de génération
 * **projet.g** : Grammaire
+* **Mapile.java** : Fichier .java pour exécuter un code mapile
 
 ### Librairies (/lib)
 * **libclass** : Classes Ecriture, Lecture, UtilLex et ExecMapile
 * **antlr** : Jar antlr
 
 ### Jeux de tests (/)
-* **DeclExp-TX.pro** : Jeux des profs (de T1 à T6)
+#### Jeux des profs
+* **DeclExp-TX.pro** : Jeux valides de déclaration et d'expressions
+* **ErrX-DeclExp.pro** : Jeux erronnés de déclaration et d'expressions
+* **polyPX+.pro** : Jeux du poly
+* **TDexoX.pro** : Jeux des TD
+#### Jeux persos
+* **Bases-TX.pro** : Jeux valides d'instructions de bases
 
 ---
 
 ## Notes
 
 ### Génération avec ANTLR
-A chaque modification de la grammaire *projet.g*, lancer la commande `/src g2java projet.g` puis rafraichir le projet Java.
+A chaque modification de la grammaire *projet.g*, lancer la commande `src g2java projet.g` puis rafraichir le projet Java.
+
+### Compilation
+Pour compiler "test/code.pro", lancer `src/projet.java` et donner "code" comme entrée.
 
 ### Notation des points de générations
-Un point de génération a pour numéro son numéro de ligne dans `/grammar.g` * 10 à quelques unités près.
+Un point de génération a pour numéro son numéro de ligne dans `grammar.g` * 10 à quelques unités près.
 
 ### Méthodes et attributs utiles
 Voir `/src/PtGen.java`.
+
+### AVANT LE RENDU
+Enlever `nomDuSource = "test/"+nomDuSource;` de `src/projet.java`.

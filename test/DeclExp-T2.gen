@@ -1,15 +1,15 @@
-FICHIER DeclExp-T1.gen : 
+FICHIER DeclExp-T2.gen : 
 
-   1  reserver        5
+   1  reserver        6
    3  empiler        77
-   5  empiler         7
+   5  contenug        2
    7  sous      
    8  empiler         2
   10  div       
   11  empiler         1
   13  empiler         0
   15  et        
-  16  contenug        2
+  16  contenug        3
   18  non       
   19  empiler         1
   21  empiler         0
@@ -29,6 +29,6 @@ FICHIER DeclExp-T1.gen :
   43  ou        
   44  contenug        0
   46  contenug        1
-  48  contenug        2
-  50  contenug        3
-  52  contenug        4
+  48  contenug        3
+  50  contenug        4
+  52  contenug        5

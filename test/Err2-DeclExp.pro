@@ -1,6 +1,6 @@
-programme premiertest:
+programme premiertest:	{erreur testee: declaration manquante}
 
-const max=+77; marq=-1; oui=vrai; nenni=faux;
+const min=7; max=+77; marq=-1; oui=vrai;
 var ent i,j;
     bool b1,b2,b3;
 

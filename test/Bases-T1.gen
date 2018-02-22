@@ -1,0 +1,23 @@
+FICHIER Bases-T1.gen : 
+
+   1  reserver        4
+   3  lirent    
+   4  affecterg       0
+   6  lirebool  
+   7  affecterg       2
+   9  lirent    
+  10  affecterg       1
+  12  empiler         5
+  14  contenug        0
+  16  add       
+  17  contenug        1
+  19  sup       
+  20  contenug        2
+  22  et        
+  23  affecterg       3
+  25  contenug        3
+  27  ecrbool   
+  28  contenug        0
+  30  contenug        1
+  32  add       
+  33  ecrent    
