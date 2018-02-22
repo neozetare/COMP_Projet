@@ -257,6 +257,25 @@ public class PtGen {
 				po.modifier(pileRep.depiler(), po.getIpo() + 1);
 				break;
 				
+			// boucle
+				
+			case 890:
+				pileRep.empiler(po.getIpo() + 1);
+				break;
+				
+			case 891:
+				verifBool();
+				po.produire(BSIFAUX);
+				po.produire(0);
+				pileRep.empiler(po.getIpo());
+				break;
+				
+			case 892:
+				po.modifier(pileRep.depiler(), po.getIpo() + 3);
+				po.produire(BINCOND);
+				po.produire(pileRep.depiler());
+				break;
+				
 			// lecture
 				
 			case 920:

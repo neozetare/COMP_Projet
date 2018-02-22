@@ -1,4 +1,4 @@
-programme premiertest:
+programme testsi:
 
 var ent x;
 
