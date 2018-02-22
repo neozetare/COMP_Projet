@@ -236,6 +236,26 @@ public class PtGen {
 			case 380:
 				tCour = BOOL;
 				break;
+
+			// inssi
+				
+			case 800:
+				verifBool();
+				po.produire(BSIFAUX);
+				po.produire(0);
+				pileRep.empiler(po.getIpo());
+				break;
+
+			case 801:
+				po.produire(BINCOND);
+				po.produire(0);
+				po.modifier(pileRep.depiler(), po.getIpo() + 1);
+				pileRep.empiler(po.getIpo());
+				break;
+				
+			case 802:
+				po.modifier(pileRep.depiler(), po.getIpo() + 1);
+				break;
 				
 			// lecture
 				
