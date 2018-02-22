@@ -34,7 +34,7 @@ import java.io.FileInputStream;
 catch (RecognitionException e) {reportError (e) ; throw e ; }}
 
 
-unite  :   unitprog  EOF {PtGen.pt(10);}
+unite  :   unitprog {PtGen.pt(10);} EOF
       |    unitmodule  EOF
   ;
 
@@ -205,8 +205,9 @@ ID  :   ('a'..'z'|'A'..'Z')('a'..'z'|'A'..'Z'|'0'..'9'|'_')* ;
 
 // zone purement lexicale //
 
-INT :   '0'..'9'+ ;
-WS  :   (' '|'\t' | '\n' |'\r')+ {skip();} ; // definition des "espaces"
+INT   :   '0'..'9'+ ;
+WS    :   (' '|'\t' |'\r')+ {skip();} ; // definition des "espaces"
+LIGNE :   '\n' {UtilLex.incrementeLigne();skip();};
 
 
 COMMENT

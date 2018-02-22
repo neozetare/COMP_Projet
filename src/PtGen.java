@@ -199,6 +199,7 @@ public class PtGen {
 			// unite
 				
 			case 10:
+				po.produire(ARRET);
 				afftabSymb();
 				po.constObj();
 				po.constGen();
