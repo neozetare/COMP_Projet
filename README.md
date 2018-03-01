@@ -29,7 +29,7 @@ Projet de COMP - L3 INFO g1.2 - MARTIN\_RAZA\_PHAM
 ## Notes
 
 ### Génération avec ANTLR
-A chaque modification de la grammaire *projet.g*, lancer la commande `src g2java projet.g` puis rafraichir le projet Java.
+A chaque modification de la grammaire *projet.g*, ex�cuter le bat `g2java.bat` puis rafraichir le projet Java.
 
 ### Compilation
 Pour compiler "test/code.pro", lancer `src/projet.java` et donner "code" comme entrée.
