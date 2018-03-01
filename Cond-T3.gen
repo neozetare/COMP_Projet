@@ -1,0 +1,28 @@
+FICHIER Cond-T3.gen : 
+
+   1  reserver        3
+   3  lirebool  
+   4  affecterg       0
+   6  lirebool  
+   7  affecterg       1
+   9  lirebool  
+  10  affecterg       2
+  12  empiler         1
+  14  ecrbool   
+  15  contenug        0
+  17  bsifaux        24
+  19  empiler         1
+  21  ecrent    
+  22  bincond        40
+  24  contenug        1
+  26  bsifaux        33
+  28  empiler         2
+  30  ecrent    
+  31  bincond        40
+  33  contenug        2
+  35  bsifaux        40
+  37  empiler         3
+  39  ecrent    
+  40  empiler         0
+  42  ecrbool   
+  43  arret     

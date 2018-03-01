@@ -116,10 +116,10 @@ instruction
 inssi : 'si' expression {PtGen.pt(800);} 'alors'  instructions ('sinon' {PtGen.pt(801);} instructions)? 'fsi' {PtGen.pt(802);}
   ;
 
-inscond : 'cond'  expression  ':' instructions
-          (','  expression  ':' instructions )*
-          ('aut'  instructions |  )
-          'fcond'
+inscond : 'cond' {PtGen.pt(830);} expression {PtGen.pt(831);} ':' instructions
+  (',' {PtGen.pt(840);} expression {PtGen.pt(831);} ':' instructions )*
+  ('aut' {PtGen.pt(840);} instructions | {PtGen.pt(850);} )
+  'fcond' {PtGen.pt(860);}
   ;
 
 boucle  : 'ttq' {PtGen.pt(890);} expression {PtGen.pt(891);} 'faire' instructions 'fait' {PtGen.pt(892);}
