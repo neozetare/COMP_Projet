@@ -108,7 +108,7 @@ public class PtGen {
   
     // Variables du trinôme
     
-    static int tabSymb_nombreVarGlobales, tabSymb_iCour,
+    static int tabSymb_nombreVars, tabSymb_iCour,
     	tabSymb_iAAffecter;
    
     // Dï¿½finition de la table des symboles
@@ -184,7 +184,7 @@ public class PtGen {
 		// initialisation du type de l'expression courante
 		tCour = NEUTRE;
 		
-		tabSymb_nombreVarGlobales = 0;
+		tabSymb_nombreVars = 0;
 
 	} // initialisations
 
@@ -208,7 +208,7 @@ public class PtGen {
 			// consts
 				
 			case 310:
-				if (presentIdent(1) != 0)
+				if (presentIdent(bc) != 0)
 					UtilLex.messErr("Identificateur \"" + UtilLex.repId(UtilLex.numId) + "\" déjà utilisé");
 				placeIdent(UtilLex.numId, CONSTANTE, tCour, vCour);
 				break;
@@ -216,15 +216,18 @@ public class PtGen {
 			// vars
 				
 			case 340:
-				if (presentIdent(1) != 0)
+				if (presentIdent(bc) != 0)
 					UtilLex.messErr("Identificateur \"" + UtilLex.repId(UtilLex.numId) + "\" déjà utilisé");
-				placeIdent(UtilLex.numId, VARGLOBALE, tCour, tabSymb_nombreVarGlobales);
-				tabSymb_nombreVarGlobales++;
+				if (bc == 1)
+					placeIdent(UtilLex.numId, VARGLOBALE, tCour, tabSymb_nombreVars);
+				else
+					placeIdent(UtilLex.numId, VARLOCALE, tCour, tabSymb_nombreVars);
+				tabSymb_nombreVars++;
 				break;
 				
 			case 341:
 				po.produire(RESERVER);
-				po.produire(tabSymb_nombreVarGlobales);
+				po.produire(tabSymb_nombreVars);
 				break;
 				
 			// type
