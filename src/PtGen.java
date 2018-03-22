@@ -190,7 +190,7 @@ public class PtGen {
 
 	// code des points de generation A COMPLETER
 	// -----------------------------------------
-	public static void pt(int numGen) {	
+	public static void pt(int numGen) {
 		switch (numGen) {
 			case 0:
 				initialisations();
@@ -316,11 +316,20 @@ public class PtGen {
 			// lecture
 				
 			case 920:
-				tabSymb_iCour = presentIdent(1);
+				tabSymb_iCour = presentIdent(bc);
 				if (tabSymb_iCour == 0)
 					UtilLex.messErr("Identificateur \"" + UtilLex.repId(UtilLex.numId) + "\" non déclaré");
-				if (tabSymb[tabSymb_iCour].categorie != VARGLOBALE)
+				
+				switch (tabSymb[tabSymb_iCour].categorie) {
+					case CONSTANTE:
+					case PARAMFIXE:
+					case PROC:
+					case DEF:
+					case REF:
+					case PRIVEE:
 						UtilLex.messErr("Variable attendue");
+						break;
+				}
 				
 				switch (tabSymb[tabSymb_iCour].type) {
 					case BOOL:
@@ -334,8 +343,26 @@ public class PtGen {
 						break;
 				}
 				
-				po.produire(AFFECTERG);
+				switch (tabSymb[tabSymb_iCour].categorie) {
+					case VARGLOBALE:
+						po.produire(AFFECTERG);
+						break;
+					case VARLOCALE:
+					case PARAMMOD:
+						po.produire(AFFECTERL);
+						break;
+				}
+				
 				po.produire(tabSymb[tabSymb_iCour].info);
+				
+				switch (tabSymb[tabSymb_iCour].categorie) {						
+					case VARLOCALE:
+						po.produire(0);
+						break;
+					case PARAMMOD:
+						po.produire(1);
+						break;
+				}
 				break;
 				
 			// ecriture
@@ -357,11 +384,20 @@ public class PtGen {
 			// affouappel
 				
 			case 990:
-				tabSymb_iAAffecter = presentIdent(1);
+				tabSymb_iAAffecter = presentIdent(bc);
 				if (tabSymb_iAAffecter == 0)
 					UtilLex.messErr("Identificateur \"" + UtilLex.repId(UtilLex.numId) + "\" non déclaré");
-				if (tabSymb[tabSymb_iAAffecter].categorie != VARGLOBALE)
-					UtilLex.messErr("Variable attendue");
+
+				switch (tabSymb[tabSymb_iCour].categorie) {
+					case CONSTANTE:
+					case PARAMFIXE:
+					case PROC:
+					case DEF:
+					case REF:
+					case PRIVEE:
+						UtilLex.messErr("Variable attendue");
+						break;
+				}
 				break;
 				
 			case 991:
@@ -376,8 +412,27 @@ public class PtGen {
 						UtilLex.messErr("Type d'identificateur invalide");
 						break;
 				}
-				po.produire(AFFECTERG);
+				
+				switch (tabSymb[tabSymb_iAAffecter].categorie) {
+					case VARGLOBALE:
+						po.produire(AFFECTERG);
+						break;
+					case VARLOCALE:
+					case PARAMMOD:
+						po.produire(AFFECTERL);
+						break;
+				}
+				
 				po.produire(tabSymb[tabSymb_iAAffecter].info);
+				
+				switch (tabSymb[tabSymb_iAAffecter].categorie) {						
+					case VARLOCALE:
+						po.produire(0);
+						break;
+					case PARAMMOD:
+						po.produire(1);
+						break;
+				}
 				break;
 				
 			// expression
@@ -457,7 +512,7 @@ public class PtGen {
 				break;
 				
 			case 1430:
-				tabSymb_iCour = presentIdent(1);
+				tabSymb_iCour = presentIdent(bc);
 				if (tabSymb_iCour == 0)
 					UtilLex.messErr(UtilLex.repId(UtilLex.numId) + " non déclaré");
 				tCour = tabSymb[tabSymb_iCour].type;
@@ -469,11 +524,27 @@ public class PtGen {
 					case VARGLOBALE:
 						po.produire(CONTENUG);
 						break;
+					case VARLOCALE:
+					case PARAMFIXE:
+					case PARAMMOD:
+						po.produire(CONTENUL);
+						break;
 					default:
 						UtilLex.messErr("Catégorie d'identificateur invalide");
 						break;
 				}
+				
 				po.produire(tabSymb[tabSymb_iCour].info);
+				
+				switch (tabSymb[tabSymb_iCour].categorie) {
+					case VARLOCALE:
+					case PARAMFIXE:
+						po.produire(0);
+						break;
+					case PARAMMOD:
+						po.produire(1);
+						break;
+				}
 				break;
 				
 			// valeur
