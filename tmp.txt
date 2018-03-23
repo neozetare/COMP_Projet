@@ -1,39 +1,46 @@
-boucle: 'ttq' (2) expression (3) 'faire' instruction 'fait' (4)
-
-case 2:
-	pileRep.empiler(po.getIpo() + 1);
-	break;
-case 3:
-	verifBool();
-	po.produire(BSIFAUX);
-	po.produire(0);
-	pileRep.empiler(po.getIpo());
-	break;
-case 4:
-	po.modifier(pileRep.depiler(), po.getIpo() + 1);
-	po.produire(BINCOND);
-	po.produire(pileRep.depiler());
-	break;
-	
-	
-inssi : 'si' expression {PtGen.pt(800);} 'alors'  instructions ('sinon' {PtGen.pt(801);} instructions)? 'fsi' {PtGen.pt(802);}
-				
-			//inssi
-				
-			case 800:
-				verifBool();
-				po.produire(BSIFAUX);
-				po.produire(0);
-				pileRep.empiler(po.getIpo());
-				break;
-
-			case 801:
-				po.produire(BINCOND);
-				po.produire(0);
-				po.modifier(pileRep.depiler(), po.getIpo() + 1);
-				pileRep.empiler(po.getIpo());
+//PF
+			case 570:
+				placeIdent(UtilLex.numId, PARAMFIXE, tCour, tabSymb_nombreParam++);
 				break;
 				
-			case 802:
-				po.modifier(pileRep.depiler(), po.getIpo() + 1);
+				
+				
+			//PM
+			case 630:
+				placeIdent(UtilLex.numId, PARAMMOD, tCour, tabSymb_nombreParam++);
+				break;
+        
+        
+        case 1070:
+				//mettre nom prénom du groupe dans projet.g (au début si possible)
+				tabSymb_iCour = presentIdent(bc);
+				if (tabSymb_iCour == 0)
+					UtilLex.messErr(UtilLex.repId(UtilLex.numId) + " non déclaré");
+				tCour = tabSymb[tabSymb_iCour].type;
+				switch (tabSymb[tabSymb_iCour].categorie)
+				{
+					case VARGLOBALE:
+						po.produire(EMPILERADG);
+						po.produire(tabSymb[tabSymb_iCour].info);
+						break;
+					case VARLOCALE:
+						po.produire(EMPILERADL);
+						po.produire(tabSymb[tabSymb_iCour].info);
+						po.produire(0);
+						break;
+					case CONSTANTE:
+						UtilLex.messErr("Impossible de modifier une constante");
+						break;
+					case PARAMFIXE:
+						UtilLex.messErr("Impossible de modifier une constante");
+						break;
+					case PARAMMOD:
+						po.produire(EMPILERADL);
+						po.produire(tabSymb[tabSymb_iCour].info);
+						po.produire(1);
+						break;
+					default:
+						UtilLex.messErr("Catégorie d'identificateur invalide");
+						break;
+				}
 				break;

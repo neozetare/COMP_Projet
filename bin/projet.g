@@ -1,3 +1,6 @@
+// MARTIN_RAZA_PHAM
+// g1.2
+
 // Grammaire du langage PROJET
 // COMP L3
 // Anne Grazon, Veronique Masson
@@ -40,7 +43,7 @@ unite  :   unitprog {PtGen.pt(10);} EOF
 
 unitprog
   : 'programme' ident ':'
-     declarations
+     declarations {PtGen.pt(70);}
      corps { System.out.println("succes, arret de la compilation "); }
   ;
 
@@ -67,17 +70,17 @@ specif  : ident  ( 'fixe' '(' type  ( ',' type  )* ')' )?
 consts  : 'const' ( ident  '=' valeur  ptvg {PtGen.pt(310);} )+
   ;
 
-vars  : 'var' ( type ident ( ',' {PtGen.pt(340);}  ident  )* ptvg {PtGen.pt(340);} )+ {PtGen.pt(341);}
+vars  : 'var' ( type ident ( ',' {PtGen.pt(340);} ident )* ptvg {PtGen.pt(340);} )+ {PtGen.pt(341);}
   ;
 
 type  : 'ent' {PtGen.pt(370);}
   |     'bool' {PtGen.pt(380);}
   ;
 
-decprocs: (decproc ptvg)+
+decprocs: {PtGen.pt(410);} (decproc ptvg)+
   ;
 
-decproc :  'proc'  ident  parfixe? parmod? consts? vars? corps
+decproc :  'proc'  ident {PtGen.pt(440);} parfixe? parmod? {PtGen.pt(441);} consts? vars? corps {PtGen.pt(442);}
   ;
 
 ptvg  : ';'
@@ -90,13 +93,13 @@ corps : 'debut' instructions 'fin'
 parfixe: 'fixe' '(' pf ( ';' pf)* ')'
   ;
 
-pf  : type ident  ( ',' ident  )*
+pf  : type ident {PtGen.pt(570);} ( ',' ident {PtGen.pt(570);} )*
   ;
 
 parmod  : 'mod' '(' pm ( ';' pm)* ')'
   ;
 
-pm  : type ident  ( ',' ident  )*
+pm  : type ident {PtGen.pt(630);} ( ',' ident {PtGen.pt(630);} )*
   ;
 
 instructions
@@ -133,14 +136,14 @@ ecriture: 'ecrire' '(' expression {PtGen.pt(950);} ( ',' expression {PtGen.pt(95
 
 affouappel
   : ident  ( {PtGen.pt(990);} ':=' expression {PtGen.pt(991);}
-            |   (effixes (effmods)?)?
+            |  {PtGen.pt(1000);} (effixes (effmods)?)? {PtGen.pt(1001);}
            )
   ;
 
-effixes : '(' (expression  (',' expression  )*)? ')'
+effixes : '(' (expression {PtGen.pt(1040);} (',' expression {PtGen.pt(1040);} )*)? ')'
   ;
 
-effmods :'(' (ident  (',' ident  )*)? ')'
+effmods :'(' (ident {PtGen.pt(1070);} (',' ident {PtGen.pt(1070);} )*)? ')'
   ;
 
 expression: (exp1) ('ou' {PtGen.pt(1110);} exp1 {PtGen.pt(1110); PtGen.pt(1111);} )*
