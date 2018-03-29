@@ -204,12 +204,6 @@ public class PtGen {
 				po.constGen();
 				break;
 				
-			// unitprog
-				
-			case 70:
-				po.modifier(pileRep.depiler(), po.getIpo() + 1);
-				break;
-				
 			// consts
 				
 			case 310:
@@ -251,6 +245,10 @@ public class PtGen {
 				po.produire(BINCOND);
 				po.produire(0);
 				pileRep.empiler(po.getIpo());
+				break;
+				
+			case 411:
+				po.modifier(pileRep.depiler(), po.getIpo() + 1);
 				break;
 				
 			// decproc
