@@ -1,0 +1,122 @@
+FICHIER polyP12-ess1.ima : 
+
+   1  reserver        7
+   3  appel          63   0
+   6  appel         148   0
+   9  lirent    
+  10  affecterg       0
+  12  contenug        0
+  14  empiler        -1
+  16  diff      
+  17  bsifaux        56
+  19  contenug        0
+  21  empiler         0
+  23  supeg     
+  24  contenug        0
+  26  empiler        20
+  28  infeg     
+  29  et        
+  30  bsifaux        51
+  32  contenug        0
+  34  empiler        10
+  36  inf       
+  37  bsifaux        46
+  39  contenug        0
+  41  appel          69   1
+  44  bincond        51
+  46  contenug        0
+  48  appel         154   1
+  51  lirent    
+  52  affecterg       0
+  54  bincond        12
+  56  appel         125   0
+  59  appel         210   0
+  62  arret     
+  63  empiler         0
+  65  affecterg       1
+  67  retour          0
+  69  contenug        1
+  71  empiler         0
+  73  eg        
+  74  bsifaux        88
+  76  contenul        0   0
+  79  affecterg       2
+  81  contenul        0   0
+  84  affecterg       3
+  86  bincond       116
+  88  contenul        0   0
+  91  contenug        2
+  93  inf       
+  94  bsifaux       103
+  96  contenul        0   0
+  99  affecterg       2
+ 101  bincond       116
+ 103  contenul        0   0
+ 106  contenug        3
+ 108  sup       
+ 109  bsifaux       116
+ 111  contenul        0   0
+ 114  affecterg       3
+ 116  contenug        1
+ 118  empiler         1
+ 120  add       
+ 121  affecterg       1
+ 123  retour          1
+ 125  contenug        1
+ 127  empiler         0
+ 129  diff      
+ 130  bsifaux       143
+ 132  contenug        1
+ 134  ecrent    
+ 135  contenug        2
+ 137  ecrent    
+ 138  contenug        3
+ 140  ecrent    
+ 141  bincond       146
+ 143  empiler         0
+ 145  ecrent    
+ 146  retour          0
+ 148  empiler         0
+ 150  affecterg       4
+ 152  retour          0
+ 154  contenug        4
+ 156  empiler         0
+ 158  eg        
+ 159  bsifaux       173
+ 161  contenul        0   0
+ 164  affecterg       5
+ 166  contenul        0   0
+ 169  affecterg       6
+ 171  bincond       201
+ 173  contenul        0   0
+ 176  contenug        5
+ 178  inf       
+ 179  bsifaux       188
+ 181  contenul        0   0
+ 184  affecterg       5
+ 186  bincond       201
+ 188  contenul        0   0
+ 191  contenug        6
+ 193  sup       
+ 194  bsifaux       201
+ 196  contenul        0   0
+ 199  affecterg       6
+ 201  contenug        4
+ 203  empiler         1
+ 205  add       
+ 206  affecterg       4
+ 208  retour          1
+ 210  contenug        4
+ 212  empiler         0
+ 214  diff      
+ 215  bsifaux       228
+ 217  contenug        4
+ 219  ecrent    
+ 220  contenug        5
+ 222  ecrent    
+ 223  contenug        6
+ 225  ecrent    
+ 226  bincond       231
+ 228  empiler         0
+ 230  ecrent    
+ 231  retour          0

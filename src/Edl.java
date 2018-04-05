@@ -1,51 +1,38 @@
 import java.io.*;
-import java.util.HashMap;
+import java.util.Arrays;
+
 
 public class Edl {
-
-	// nombre max de modules, taille max d'un code objet d'une unité
+	
+	// nombre max de modules, taille max d'un code objet d'une unite
 	static final int MAXMOD = 5, MAXOBJ = 1000;
-	// nombres max de références externes (REF) et de points d'entrée (DEF)
-	// pour une unité
+	// nombres max de references externes (REF) et de points d'entree (DEF)
+	// pour une unite
 	private static final int MAXREF = 10, MAXDEF = 10;
-
+	
 	// typologie des erreurs
 	private static final int FATALE = 0, NONFATALE = 1;
-
+	
 	// valeurs possibles du vecteur de translation
-	private static final int TRANSDON = 1, TRANSCODE = 2, REFEXT = 3;
-
+	private static final int TRANSDON=1,TRANSCODE=2,REFEXT=3;
+	
 	// table de tous les descripteurs concernes par l'edl
 	static Descripteur[] tabDesc = new Descripteur[MAXMOD + 1];
-
+	
 	// declarations de variables A COMPLETER SI BESOIN
 	static int ipo, nMod, nbErr;
 	static String nomProg;
-	static int tailletabDesc;
-	static int tailleDicoDef;
+	
+	static String[] nomsUnites = new String[MAXMOD + 1];
+	
+	static int[] transDon;
+	static int[] transCode;
+	
+	static Descripteur.EltDef[] dicoDef = new Descripteur.EltDef[(MAXMOD + 1) * MAXDEF];
 
-	// Variables personnelles
-	static int[] transDon = new int[6];
-	static int[] transCode = new int[6];
-	static EltDicoDef[] dicoDef = new EltDicoDef[MAXMOD + 1 * MAXDEF];
-	static int[][] adFinale = new int[MAXMOD + 1][MAXDEF];
-
-	// Tableau contenant les noms des unites utilisees pour l'edition de lien
-	static String[] tabObj = new String[MAXMOD + 1];
-
-	// Classe reprenant la classe EltDef dans Descripteur
-	// Permet de remplir le dicoDef prenant pour chaque lignes un nomProc, adPo
-	// et un nbParam
-	public static class EltDicoDef {
-		public String nomProc;
-		public int adPo, nbParam;
-
-		public EltDicoDef(String nomProc, int adPo, int nbParam) {
-			this.nomProc = nomProc;
-			this.adPo = adPo;
-			this.nbParam = nbParam;
-		}
-	}
+	static int[][] adFinale = new int[MAXMOD + 1][MAXREF + 1];
+	
+	static int nbDef = 0;
 
 	// utilitaire de traitement des erreurs
 	// ------------------------------------
@@ -68,342 +55,215 @@ public class Edl {
 		tabDesc[0] = new Descripteur();
 		tabDesc[0].lireDesc(s);
 		if (!tabDesc[0].getUnite().equals("programme"))
-			erreur(NONFATALE, "programme attendu");
+			erreur(FATALE, "programme attendu");
 		nomProg = s;
-		tabObj[nMod] = s;
 
 		nMod = 0;
-		tailletabDesc++;
-
-		if (tabDesc[0].getNbDef() != 0) {
-			ajoutDicoDef(tabDesc[0]);
-		}
-
+		nomsUnites[nMod] = s;
 		while (!s.equals("") && nMod < MAXMOD) {
-			System.out.print("nom de module " + (nMod + 1) + " (RC si termine) ");
+			System.out.print("nom de module " + (nMod + 1)
+					+ " (RC si termine) ");
 			s = Lecture.lireString();
 			if (!s.equals("")) {
-				Descripteur descTmp = new Descripteur();
-				descTmp.lireDesc(s);
-
-				// On vérifie que le module donne n'as pas deja ete declare
-				for (int i = 0; i < tailletabDesc; i++) {
-					if (compareTab(descTmp, tabDesc[i])) {
-						erreur(NONFATALE, "Module deja fourni");
-					}
-				}
-
 				nMod = nMod + 1;
-				tabObj[nMod] = s;
+				nomsUnites[nMod] = s;
 				tabDesc[nMod] = new Descripteur();
 				tabDesc[nMod].lireDesc(s);
-				tailletabDesc++;
-
-				if (!tabDesc[nMod].getUnite().equals("module")) {
-					erreur(NONFATALE, "module attendu");
-				}
-
-				// transDon[nMod] est egale a la somme de la valeur d'avant et
-				// du nombre de parametre globaux
-				transDon[nMod] = transDon[nMod - 1] + tabDesc[nMod - 1].getTailleGlobaux();
-				
-				// transCode[nMod] est egale a la somme de la valeur d'avant et
-				// de la taille du code du module precedent
-				transCode[nMod] = transCode[nMod - 1] + tabDesc[nMod - 1].getTailleCode();
-
-				
-				if (tabDesc[nMod].getNbDef() != 0) {
-					ajoutDicoDef(tabDesc[nMod]);
-				}
+				if (!tabDesc[nMod].getUnite().equals("module"))
+					erreur(FATALE, "module attendu");
 			}
 		}
 	}
-
-	// Permet d'ajouter une tabDef de module dans le dicoDef
-	private static void ajoutDicoDef(Descripteur desc) {
+	
+	static void basesDeDecalage() {
+		transDon = new int[nMod + 1];
+		transCode = new int[nMod + 1];
 		
-		for (int i = 1; i <= desc.getNbDef(); i++) {
-			
-			if (tailleDicoDef < dicoDef.length) {
+		transDon[0] = 0; transCode[0] = 0;
+		for (int i = 1; i <= nMod; i++) {
+			transDon[i] = transDon[i-1] + tabDesc[i-1].getTailleGlobaux();
+			transCode[i] = transCode[i-1] + tabDesc[i-1].getTailleCode();
+		}
+	}
+	
+	static void dicoDeDefs() {
+		for (int i = 1; i <= nMod; i++) {
+			if (tabDesc[i].getNbDef() > MAXDEF)
+				erreur(FATALE, nomsUnites[i] + " : " + MAXDEF + " def maximum (" + tabDesc[i].getNbDef() + " trouvÃ©es)");
+
+			boolean presentDef;
+			for (int j = 1; j <= tabDesc[i].getNbDef(); j++) {
+				presentDef = false;
 				
-				if (!existeDico(desc.getDefNomProc(i))) {
-					
-					dicoDef[tailleDicoDef] = new EltDicoDef(desc.getDefNomProc(i), desc.getDefAdPo(i), desc.getDefNbParam(i));
-					
-					// On ajoute adPo à la valeur transCode associee a l'unite
-					dicoDef[tailleDicoDef].adPo += transCode[nMod];
-					tailleDicoDef++;
-					
-				} else {
-					erreur(NONFATALE, "Double definition d'une procedure");
+				for (int k = 1; k <= nbDef; k++) {
+					if (tabDesc[i].getDefNomProc(j).equals(dicoDef[k].nomProc))
+						presentDef = true;
 				}
 				
-			} else {
-				erreur(NONFATALE, "Dépassement taille dicoDef");
+				if (presentDef)
+					erreur(FATALE, nomsUnites[i] + " : def \"" + tabDesc[i].getDefNomProc(j) + "\" dÃ©jÃ  dÃ©finie)");
+				
+				dicoDef[++nbDef] = tabDesc[i].new EltDef(
+					tabDesc[i].getDefNomProc(j),
+					transCode[i] + tabDesc[i].getDefAdPo(j),
+					tabDesc[i].getDefNbParam(j)
+				);
 			}
 		}
 	}
-
-	// Verifie si il existe une double definition de procedure
-	// Rend true si il y'a une double definition
-	private static boolean existeDico(String nom) {
-		for (int j = 0; j < tailleDicoDef; j++) {
-			if (dicoDef[j].nomProc.equals(nom)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	// Permet de comparer deux descripteurs
-	// Rend true si les deux descripteurs sont les memes
-	private static boolean compareTab(Descripteur desc1, Descripteur desc2) {
-		boolean a = false;
-
-		if ((desc1.getUnite().compareTo(desc2.getUnite()) == 0) && desc1.getTailleCode() == desc2.getTailleCode()
-				&& desc1.getTailleGlobaux() == desc2.getTailleGlobaux() && desc1.getNbDef() == desc2.getNbDef()
-				&& desc1.getNbRef() == desc2.getNbRef() && desc1.getNbTransExt() == desc2.getNbTransExt()) {
-			a = true;
-		}
-		if (a) {
-			for (int i = 1; i <= desc1.getNbDef(); i++) {
-				String tmp = desc2.getDefNomProc(i);
-				if (desc1.presentDef(tmp) == 0) {
-					return false;
-				}
-			}
-			for (int j = 1; j <= desc1.getNbRef(); j++) {
-				String tmp = desc2.getRefNomProc(j);
-				if (desc1.presentRef(tmp) == 0) {
-					return false;
-				}
-			}
-		}
-		return a;
-	}
-
-	// Fonction permettant la creation de la table adFinale
-	private static void createAdFinale() {
-		if (verifRefDef()) {
-			for (int i = 0; i <= nMod; i++) {
-				if (tabDesc[i].getNbRef() != 0) {
-					for (int j = 1; j <= tabDesc[i].getNbRef(); j++) {
-						adFinale[i][j] = getDicoDefAdPo(tabDesc[i].getRefNomProc(j));
+	
+	static void adressesFinales() {
+		for (int i = 0; i <= nMod; i++) {
+			for (int j = 1; j <= tabDesc[i].getNbRef(); j++) {
+				adFinale[i][j] = -1;
+				
+				for (int k = 1; k <= nbDef; k++) {
+					if (tabDesc[i].getRefNomProc(j).equals(dicoDef[k].nomProc)) {
+						adFinale[i][j] = dicoDef[k].adPo;
+						break;
 					}
 				}
-			}
-		} else {
-			erreur(NONFATALE, "Nombre de REF different du nombre de DEF");
-		}
-	}
-
-	// Retourne l'adresse adPo dans le dicoDef de la procedure passee en
-	// parametre
-	// -1 sinon
-	private static int getDicoDefAdPo(String nomProcRef) {
-		for (int k = 0; k < tailleDicoDef; k++) {
-			if (dicoDef[k].nomProc.equals(nomProcRef)) {
-				return dicoDef[k].adPo;
-			}
-		}
-		erreur(NONFATALE, "Reference \"" + nomProcRef + "\" introuvable dans le dicoDef");
-		return -1;
-	}
-
-	// Verifie que le nombre de REF total differents est le meme que le nombre
-	// de DEF total
-	private static boolean verifRefDef() {
-		int nbDefTotal = 0;
-		int nbRefTotal = 0;
-		for (int i = 0; i <= nMod; i++) {
-			nbDefTotal += tabDesc[i].getNbDef();
-			nbRefTotal += tabDesc[i].getNbRef();
-		}
-
-		for (int j = 0; j <= nMod; j++) {
-			nbRefTotal = nbRefTotal - appartientRef(tabDesc[j].getRefNomProc(j));
-		}
-
-		return (nbDefTotal == nbRefTotal);
-	}
-
-	// Compte le nombre de repetion de la meme reference dans differents modules
-	// afin de ne pas les compter plusieurs fois
-	private static int appartientRef(String nom) {
-		int res = 0;
-		if (nMod >= 1) {
-			for (int i = 1; i <= nMod; i++) {
-				if (tabDesc[i].presentRef(nom) != 0) {
-					res++;
+				
+				if (adFinale[i][j] == -1) {
+					erreur(FATALE, nomsUnites[i] + " : def rÃ©fÃ©rencÃ©e \"" + tabDesc[i].getRefNomProc(j) + "\" inexistante)");
 				}
 			}
 		}
-		return res;
 	}
+	
+	static void printDebug() {
+		System.out.println();
+		
+		System.out.println("transDon");
+		System.out.println(Arrays.toString(transDon));
+		System.out.println();
 
-	// Affichage des differentes tables
-	private static void printDicoDef() {
-		System.out.println("---------DicoDef--------");
-		System.out.println("i  Proc adPo nbParam");
-		for (int i = 0; i < tailleDicoDef; i++) {
-			System.out.println(i + "  " + dicoDef[i].nomProc + "  " + dicoDef[i].adPo + "  " + dicoDef[i].nbParam);
-		}
-	}
+		System.out.println("transCode");
+		System.out.println(Arrays.toString(transCode));
+		System.out.println();
 
-	private static void printTransDon() {
-		System.out.println("----------transDon---------");
-		for (int i = 0; i < transDon.length; i++) {
-			System.out.println(transDon[i]);
-		}
-	}
-
-	private static void printTransCode() {
-		System.out.println("---------transCode-------");
-		for (int i = 0; i < tailleDicoDef; i++) {
-			System.out.println(transCode[i]);
-		}
-	}
-
-	private static void printAdFinale() {
+		System.out.println("dicoDef");
+		for (int i = 1; i <= nbDef; i++)
+			System.out.println(i + " [" + dicoDef[i].nomProc + ", " + dicoDef[i].adPo + ", " + dicoDef[i].nbParam + "]");
+		System.out.println();
+		
+		System.out.println("adFinale");
 		for (int i = 0; i <= nMod; i++) {
-			System.out.print("[" + i + "]" + " | ");
-
-			if (tabDesc[i].getNbRef() == 0) {
-				System.out.print("Aucune references");
-			}
-
+			System.out.print(i + " [");
 			for (int j = 1; j <= tabDesc[i].getNbRef(); j++) {
-				System.out.print("[" + adFinale[i][j] + "] ");
+				System.out.print(adFinale[i][j]);
+				if (j != tabDesc[i].getNbRef())
+					System.out.print(", ");
 			}
-
-			System.out.println("");
+			System.out.println(']');
 		}
+		System.out.println();
 	}
-
-	// Phase 2 ====>
+	
 	static void constMap() {
-
-		// f2 = fichier exécutable .map construit
+		// f2 = fichier exï¿½cutable .map construit
 		OutputStream f2 = Ecriture.ouvrir(nomProg + ".map");
 		if (f2 == null)
-			erreur(NONFATALE, "création du fichier " + nomProg + ".map impossible");
-		// pour construire le code concaténé de toutes les unités
-		int[] po = new int[(nMod + 1) * MAXOBJ + 1];
+			erreur(FATALE, "crÃ©ation du fichier " + nomProg + ".map impossible");
+		// pour construire le code concatï¿½nï¿½ de toutes les unitï¿½s
+		int[] po = new int[(nMod + 1) * MAXOBJ];
 
-		// Pour chaque unite
+		// Pour chaque descripteur
 		for (int i = 0; i <= nMod; i++) {
+			InputStream f = Lecture.ouvrir(nomsUnites[i] + ".obj");
+			if (f == null)
+				erreur(FATALE, "fichier " + nomsUnites[i] + ".obj inexistant");
 
-			InputStream obj = Lecture.ouvrir(tabObj[i] + ".obj");
+			VTrans[] vTrans = new VTrans[MAXOBJ];
+			int nbVTrans = 0;
 
-			if (obj == null) {
-				erreur(FATALE, "Erreur ouverture fichier " + "\"" + tabObj[i] + ".obj\"");
-			}
+			// RÃ©cupÃ©ration des vecteurs dans les descripteurs
+			for (int j = 0; j < tabDesc[i].getNbTransExt(); j++)
+				vTrans[nbVTrans++] = new VTrans(Lecture.lireInt(f), Lecture.lireInt(f));
 
-			int poAdr = 0;
-			int transType = 0;
-
-			HashMap<Integer, Integer> transitions = new HashMap<Integer, Integer>();
-
-			// On remplit une map avec les transitions en tete du fichier .obj
-			// courant
-			for (int j = 0; j < tabDesc[i].getNbTransExt(); j++) {
-				poAdr = Lecture.lireInt(obj) + transCode[i];
-				transType = Lecture.lireIntln(obj);
-				transitions.put(poAdr, transType);
-			}
-
-			// Variable de type Integer car get(ipo) retourn un type Integer
-			Integer transi = 0;
-			int adrRef = 1;
-			int instructionFinProg = tabDesc[i].getTailleCode();
-
-			if (i == nMod) {
-				instructionFinProg = tabDesc[i].getTailleCode() - 1;
-			}
-
-			// Pour chaque lignes du .obj courant 
-			for (int k = 1; k <= instructionFinProg; k++) {
-
-				po[ipo] = Lecture.lireIntln(obj);
-				
-				// On verifie si c'est une partie de la table de translation ou du code lui meme
-				transi = transitions.get(ipo);
-
-				if (transi != null) {
-
-					// Selon la translation utilisee
-					switch (transi) {
-
-					case TRANSDON:
-						po[ipo] += transDon[i];
-						break;
-
-					case TRANSCODE:
-						po[ipo] += transCode[i];
-						break;
-
-					case REFEXT:
-						po[ipo] = adFinale[i][adrRef];
-						adrRef++;
-						break;
-					}
-				}
-
+			// ConcatÃ©nation du programme objet source dans le po final
+			for (int j = 1; j <= tabDesc[i].getTailleCode(); j++) {
+				po[j + transCode[i]] = Lecture.lireInt(f);
 				ipo++;
 			}
 
-			// On ferme l'inputStream du fichier obj
-			Lecture.fermer(obj);
+			// Translations de vecteurs
+			for (int k = 0; k < nbVTrans; k++) {
+				switch (vTrans[k].code) {
+					case TRANSCODE:
+						po[vTrans[k].adPo + transCode[i]] += transCode[i];
+						break;
+					case TRANSDON:
+						po[vTrans[k].adPo + transCode[i]] += transDon[i];
+						break;
+					case REFEXT:
+						po[vTrans[k].adPo + transCode[i]] = adFinale[i][po[vTrans[k].adPo + transCode[i]]];
+						break;
+					default:
+						erreur(FATALE, nomsUnites[i] + " : code " + vTrans[k].code + " inattendu (vecteur nÂ°" + k + ": " + vTrans[k].adPo + ' ' + vTrans[k].code + ")");
+						break;
+				}
+			}
+
+			Lecture.fermer(f);
 		}
-
-		// On met a jour le nombre a reserver a la ligne po = 2
-		po[2] = transDon[nMod] + tabDesc[nMod].getTailleGlobaux();
-
-		// Permet de remplir le fichier .map avec le tableau po
-		for (int i = 1; i <= ipo; i++) {
-			Ecriture.ecrireStringln(f2, po[i] + "");
-		}
-
+		
+		// S'il y a un RESERVER, on met Ã  jour son argument
+		if (po[1] == 1)
+			po[2] = transDon[nMod] + tabDesc[nMod].getTailleGlobaux();
+		
 		Ecriture.fermer(f2);
-		// création du fichier en mnémonique correspondant
+		// crÃ©ation du fichier en mnÃ©monique correspondant
 		Mnemo.creerFichier(ipo, po, nomProg + ".ima");
+
+		// crÃ©ation du fichier map correspondant
+		OutputStream f = Ecriture.ouvrir(nomProg + ".map");
+		if (f == null)
+			erreur(FATALE, "impossible de creer " + nomProg + ".map");
+		for (int i = 1; i <= ipo; i++)
+			Ecriture.ecrireStringln(f, "" + po[i]);
+		Ecriture.fermer(f);
 	}
 
 	public static void main(String argv[]) {
 		System.out.println("EDITEUR DE LIENS / PROJET LICENCE");
 		System.out.println("---------------------------------");
-		System.out.println("Par LE MASLE Alexis et HYSAJ Elgeta");
-		System.out.println();
-
+		System.out.println("");
 		nbErr = 0;
-		tailletabDesc = 0;
-		tailleDicoDef = 0;
-		transCode[0] = 0;
-		transDon[0] = 0;
-		ipo = 1;
-
-		// Phase 1 de l'édition de liens
+		
+		// Phase 1 de l'edition de liens
 		// -----------------------------
+		// Lecture des descripteurs
 		lireDescripteurs();
-		createAdFinale();
 
-		/*
-		 * Lignes a decommenter pour afficher la table DicoDef, la table des
-		 * TransCode, la table des TransDon et la table adFinale
-		 */
-		printDicoDef();
-		printTransCode();
-		printTransDon();
-		printAdFinale();
+		// Bases de dÃ©calage
+		basesDeDecalage();
+		
+		// Dictionnaire de defs
+		dicoDeDefs();
+		
+		// Adresses finales
+		adressesFinales();
 
+		// printDebug();
+		
 		if (nbErr > 0) {
-			System.out.println("programme exécutable non produit");
+			System.out.println("programme exÃ©cutable non produit");
 			System.exit(1);
 		}
-
-		// Phase 2 de l'édition de liens
+		
+		// Phase 2 de l'edition de liens
 		// -----------------------------
 		constMap();
 		System.out.println("Edition de liens terminee");
+	}
+}
+
+class VTrans {
+	public int adPo, code;
+
+	public VTrans(int adPo, int code) {
+		this.adPo = adPo;
+		this.code = code;
 	}
 }

@@ -215,7 +215,7 @@ public class PtGen {
 				desc.setUnite("programme");
 				break;
 				
-			case 80:
+			case 80: // après programme
 				po.produire(ARRET);
 				break;
 				
@@ -227,13 +227,13 @@ public class PtGen {
 				
 			// partiedef
 				
-			case 210:
+			case 210: // après ident def
 				desc.ajoutDef(UtilLex.repId(UtilLex.numId));
 				break;
 
 			// specif
 			
-			case 270:
+			case 270: // après ident ref
 				desc.ajoutRef(UtilLex.repId(UtilLex.numId));
 				placeIdent(UtilLex.numId, PROC, NEUTRE, desc.getNbRef());
 				placeIdent(-1, REF, NEUTRE, -1);
@@ -241,15 +241,15 @@ public class PtGen {
 				tabSymb_nombreParams = 0;
 				break;
 			
-			case 271:
+			case 271: // après type param fixe ref
 				placeIdent(-1, PARAMFIXE, tCour, tabSymb_nombreParams++);
 				break;
 				
-			case 280:
+			case 280: // après type param mod ref
 				placeIdent(-1, PARAMMOD, tCour, tabSymb_nombreParams++);
 				break;
 				
-			case 281:
+			case 281: // après ref
 				tabSymb[it-tabSymb_nombreParams].info = tabSymb_nombreParams;
 				desc.modifRefNbParam(desc.getNbRef(), tabSymb_nombreParams);
 				break;
