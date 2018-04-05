@@ -199,10 +199,14 @@ public class PtGen {
 			// unite
 				
 			case 10: // après programme
-				po.produire(ARRET);
+				desc.setTailleCode(po.getIpo());
+				
 				afftabSymb();
 				po.constObj();
 				po.constGen();
+				desc.ecrireDesc(UtilLex.nomSource);
+				
+				System.out.println("succes, arret de la compilation ");
 				break;
 				
 			// unitprog
@@ -211,14 +215,8 @@ public class PtGen {
 				desc.setUnite("programme");
 				break;
 				
-			case 70: // après déclarations
-				//po.modifier(pileRep.depiler(), po.getIpo() + 1);
-				afftabSymb();
-				break;
-				
 			case 80:
-				desc.setTailleCode(po.getIpo());
-				desc.ecrireDesc(UtilLex.nomSource);
+				po.produire(ARRET);
 				break;
 				
 			// unitmodule
@@ -297,13 +295,31 @@ public class PtGen {
 			// decprocs
 				
 			case 410: // avant déclarations de procédures
-				po.produire(BINCOND);
-				po.produire(0);
-				pileRep.empiler(po.getIpo());
+				if (desc.getUnite().equals("programme")) {
+					po.produire(BINCOND);
+					po.produire(0);
+					pileRep.empiler(po.getIpo());
+					modifVecteurTrans(TRANSCODE);
+				}
 				break;
 				
 			case 411: // après déclarations de procédures
-				po.modifier(pileRep.depiler(), po.getIpo() + 1);
+				if (desc.getUnite().equals("programme"))
+					po.modifier(pileRep.depiler(), po.getIpo() + 1);
+				
+				//pour chaque def dans desc
+				//	si pas dans tabsymb
+				//		erreur
+				
+				for (int i411 = 1; i411 <= desc.getNbDef(); i411++) {
+					boolean est_present = false;
+					for (int j411 = bc; j411 <= it && !est_present; j411++) {
+						if (tabSymb[j411].code != -1 && desc.getDefNomProc(i411).equals(UtilLex.repId(tabSymb[j411].code)))
+							est_present = true;
+					}
+					if (!est_present)
+						UtilLex.messErr("Définition incorrecte : Procédure \"" + desc.getDefNomProc(i411) +"\" non implémentée");
+				}
 				break;
 				
 			// decproc
@@ -359,6 +375,7 @@ public class PtGen {
 				po.produire(BSIFAUX);
 				po.produire(0);
 				pileRep.empiler(po.getIpo());
+				modifVecteurTrans(TRANSCODE);
 				break;
 
 			case 801: // instruction si : sinon
@@ -366,6 +383,7 @@ public class PtGen {
 				po.produire(0);
 				po.modifier(pileRep.depiler(), po.getIpo() + 1);
 				pileRep.empiler(po.getIpo());
+				modifVecteurTrans(TRANSCODE);
 				break;
 				
 			case 802: // instruction si : fsi
@@ -382,6 +400,7 @@ public class PtGen {
 				po.produire(BSIFAUX);
 				po.produire(0);
 				pileRep.empiler(po.getIpo());
+				modifVecteurTrans(TRANSCODE);
 				break;
 				
 			case 840: // instruction cond : branchement inconditionnel
@@ -389,6 +408,7 @@ public class PtGen {
 				po.produire(BINCOND);
 				po.produire(pileRep.depiler());
 				pileRep.empiler(po.getIpo());
+				modifVecteurTrans(TRANSCODE);
 				break;
 				
 			case 850: // instruction cond : pas de aut
@@ -417,12 +437,14 @@ public class PtGen {
 				po.produire(BSIFAUX);
 				po.produire(0);
 				pileRep.empiler(po.getIpo());
+				modifVecteurTrans(TRANSCODE);
 				break;
 				
 			case 892: // instruction tant que : après tant que
 				po.modifier(pileRep.depiler(), po.getIpo() + 3);
 				po.produire(BINCOND);
 				po.produire(pileRep.depiler());
+				modifVecteurTrans(TRANSCODE);
 				break;
 				
 			// lecture
@@ -449,6 +471,7 @@ public class PtGen {
 					case VARGLOBALE:
 						po.produire(AFFECTERG);
 						po.produire(tabSymb[tabSymb_iCour].info);
+						modifVecteurTrans(TRANSDON);
 						break;
 					case VARLOCALE:
 						po.produire(AFFECTERL);
@@ -533,6 +556,7 @@ public class PtGen {
 					case VARGLOBALE:
 						po.produire(AFFECTERG);
 						po.produire(tabSymb[tabSymb_iAffouappel].info);
+						modifVecteurTrans(TRANSDON);
 						break;
 					case VARLOCALE:
 						po.produire(AFFECTERL);
@@ -574,6 +598,10 @@ public class PtGen {
 				
 				po.produire(APPEL);
 				po.produire(tabSymb[tabSymb_iAffouappel].info);
+				if (tabSymb[tabSymb_iAffouappel + 1].categorie == REF)
+					modifVecteurTrans(REFEXT);
+				else
+					modifVecteurTrans(TRANSCODE);
 				po.produire(tabSymb[tabSymb_iAffouappel+1].info);
 				break;
 				
@@ -598,6 +626,7 @@ public class PtGen {
 					case VARGLOBALE:
 						po.produire(EMPILERADG);
 						po.produire(tabSymb[tabSymb_iCour].info);
+						modifVecteurTrans(TRANSDON);
 						break;
 					case VARLOCALE:
 						po.produire(EMPILERADL);
@@ -718,6 +747,7 @@ public class PtGen {
 					case VARGLOBALE:
 						po.produire(CONTENUG);
 						po.produire(tabSymb[tabSymb_iCour].info);
+						modifVecteurTrans(TRANSDON);
 						break;
 					case VARLOCALE:
 					case PARAMFIXE:

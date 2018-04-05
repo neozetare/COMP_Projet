@@ -1,11 +1,11 @@
 FICHIER polyP12-ess1.desc :
 
 unite          programme
-tailleCode     61
+tailleCode     62
 tailleGlobaux  1
 nbDef          0
 nbRef          6
-nbTransExt     0
+nbTransExt     6
 tabDef          
 tabRef          
     init1  0

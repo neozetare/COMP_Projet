@@ -1,0 +1,14 @@
+FICHIER Exo7m1.gen : 
+
+   1  contenul        0   0
+   4  empiler         0
+   6  eg        
+   7  bsifaux        16
+   9  empileradg      0
+  11  appel           1   1
+  14  bincond        24
+  16  contenug        0
+  18  contenul        0   0
+  21  add       
+  22  affecterg       0
+  24  retour          1

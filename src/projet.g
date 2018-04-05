@@ -38,18 +38,18 @@ catch (RecognitionException e) {reportError (e) ; throw e ; }}
 
 
 unite  :   unitprog {PtGen.pt(10);} EOF
-      |    unitmodule  EOF
+      |    unitmodule {PtGen.pt(10);} EOF
   ;
 
 unitprog
   : 'programme' ident ':' {PtGen.pt(60);}
-     declarations {PtGen.pt(70);}
-     corps {PtGen.pt(80);} { System.out.println("succes, arret de la compilation "); }
+     declarations
+     corps {PtGen.pt(80);}
   ;
 
 unitmodule
-  : 'module' ident ':'
-     declarations {PtGen.pt(80);}
+  : 'module' ident ':' {PtGen.pt(120);}
+     declarations
   ;
 
 declarations
@@ -57,7 +57,7 @@ declarations
   ;
 
 partiedef
-  : 'def' ident {PtGen.pt(210);} (',' ident )* ptvg
+  : 'def' ident {PtGen.pt(210);} (',' ident {PtGen.pt(210);} )* ptvg
   ;
 
 partieref: 'ref'  specif (',' specif)* ptvg
