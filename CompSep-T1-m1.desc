@@ -1,0 +1,16 @@
+FICHIER CompSep-T1-m1.desc :
+
+unite          module
+tailleCode     98
+tailleGlobaux  1
+nbDef          6
+nbRef          0
+nbTransExt     11
+tabDef          
+    initi  1  0
+    opplus  7  3
+    opmoins  26  3
+    opet  45  3
+    opou  64  3
+    opnon  83  2
+tabRef          

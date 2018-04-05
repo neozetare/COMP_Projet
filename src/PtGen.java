@@ -109,7 +109,8 @@ public class PtGen {
     // Variables du trinôme
     
     static int tabSymb_nombreVars, tabSymb_nombreParams, tabSymb_iCour, tabSymb_iAffouappel, tabSymb_iParam,
-    	nbParamsFixes, nbParamsMods;
+    	nbParamsFixes, nbParamsMods,
+    	iDef;
    
     // Dï¿½finition de la table des symboles
     //
@@ -185,7 +186,6 @@ public class PtGen {
 		tCour = NEUTRE;
 		
 		tabSymb_nombreVars = 0;
-
 	} // initialisations
 
 	// code des points de generation A COMPLETER
@@ -199,10 +199,59 @@ public class PtGen {
 			// unite
 				
 			case 10: // après programme
-				po.produire(ARRET);
+				desc.setTailleCode(po.getIpo());
+				
 				afftabSymb();
 				po.constObj();
 				po.constGen();
+				desc.ecrireDesc(UtilLex.nomSource);
+				
+				System.out.println("succes, arret de la compilation ");
+				break;
+				
+			// unitprog
+			
+			case 60: // après ident programme
+				desc.setUnite("programme");
+				break;
+				
+			case 80:
+				po.produire(ARRET);
+				break;
+				
+			// unitmodule
+			
+			case 120: // après ident module
+				desc.setUnite("module");
+				break;
+				
+			// partiedef
+				
+			case 210:
+				desc.ajoutDef(UtilLex.repId(UtilLex.numId));
+				break;
+
+			// specif
+			
+			case 270:
+				desc.ajoutRef(UtilLex.repId(UtilLex.numId));
+				placeIdent(UtilLex.numId, PROC, NEUTRE, desc.getNbRef());
+				placeIdent(-1, REF, NEUTRE, -1);
+				
+				tabSymb_nombreParams = 0;
+				break;
+			
+			case 271:
+				placeIdent(-1, PARAMFIXE, tCour, tabSymb_nombreParams++);
+				break;
+				
+			case 280:
+				placeIdent(-1, PARAMMOD, tCour, tabSymb_nombreParams++);
+				break;
+				
+			case 281:
+				tabSymb[it-tabSymb_nombreParams].info = tabSymb_nombreParams;
+				desc.modifRefNbParam(desc.getNbRef(), tabSymb_nombreParams);
 				break;
 				
 			// consts
@@ -226,8 +275,11 @@ public class PtGen {
 				break;
 				
 			case 341: // après déclarations de variables
-				po.produire(RESERVER);
-				po.produire(tabSymb_nombreVars);
+				if (desc.getUnite().equals("programme")) {
+					po.produire(RESERVER);
+					po.produire(tabSymb_nombreVars);
+				}
+				desc.setTailleGlobaux(tabSymb_nombreVars);
 				break;
 				
 			// type
@@ -243,22 +295,45 @@ public class PtGen {
 			// decprocs
 				
 			case 410: // avant déclarations de procédures
-				po.produire(BINCOND);
-				po.produire(0);
-				pileRep.empiler(po.getIpo());
+				if (desc.getUnite().equals("programme")) {
+					po.produire(BINCOND);
+					po.produire(0);
+					pileRep.empiler(po.getIpo());
+					modifVecteurTrans(TRANSCODE);
+				}
 				break;
 				
 			case 411: // après déclarations de procédures
-				po.modifier(pileRep.depiler(), po.getIpo() + 1);
+				if (desc.getUnite().equals("programme"))
+					po.modifier(pileRep.depiler(), po.getIpo() + 1);
+				
+				//pour chaque def dans desc
+				//	si pas dans tabsymb
+				//		erreur
+				
+				for (int i411 = 1; i411 <= desc.getNbDef(); i411++) {
+					boolean est_present = false;
+					for (int j411 = bc; j411 <= it && !est_present; j411++) {
+						if (tabSymb[j411].code != -1 && desc.getDefNomProc(i411).equals(UtilLex.repId(tabSymb[j411].code)))
+							est_present = true;
+					}
+					if (!est_present)
+						UtilLex.messErr("Définition incorrecte : Procédure \"" + desc.getDefNomProc(i411) +"\" non implémentée");
+				}
 				break;
 				
 			// decproc
 				
-			case 440: // déclaration de procédure : identificateur de procédure
+			case 440: // déclaration de procédure : identificateur de procédure				
 				if (presentIdent(1) != 0)
 					UtilLex.messErr("Déclaration incorrecte : Identificateur \"" + UtilLex.repId(UtilLex.numId) + "\" déjà utilisé");
 				placeIdent(UtilLex.numId, PROC, NEUTRE, po.getIpo() + 1);
-				placeIdent(-1, PRIVEE, NEUTRE, 0);
+				
+				if ((iDef = desc.presentDef(UtilLex.repId(UtilLex.numId))) != 0) {
+					desc.modifDefAdPo(iDef, po.getIpo() + 1);
+					placeIdent(-1, DEF, NEUTRE, 0);
+				} else placeIdent(-1, PRIVEE, NEUTRE, 0);
+				
 				bc = it + 1;
 				tabSymb_nombreParams = 0;
 				tabSymb_nombreVars = 0;
@@ -266,6 +341,9 @@ public class PtGen {
 				
 			case 441: // déclaration de procédure : après paramètres
 				tabSymb[bc-1].info = tabSymb_nombreParams;
+
+				if (iDef != 0)
+					desc.modifDefNbParam(iDef, tabSymb_nombreParams);
 				break;
 				
 			case 442: // après déclaration de procédure
@@ -281,15 +359,13 @@ public class PtGen {
 			// pf
 				
 			case 570: // déclaration de paramètre fixe
-				placeIdent(UtilLex.numId, PARAMFIXE, tCour, tabSymb_nombreParams);
-				tabSymb_nombreParams++;
+				placeIdent(UtilLex.numId, PARAMFIXE, tCour, tabSymb_nombreParams++);
 				break;
 				
 			// pm
 				
 			case 630: // déclaration de paramètre mod
-				placeIdent(UtilLex.numId, PARAMMOD, tCour, tabSymb_nombreParams);
-				tabSymb_nombreParams++;
+				placeIdent(UtilLex.numId, PARAMMOD, tCour, tabSymb_nombreParams++);
 				break;
 
 			// inssi
@@ -299,6 +375,7 @@ public class PtGen {
 				po.produire(BSIFAUX);
 				po.produire(0);
 				pileRep.empiler(po.getIpo());
+				modifVecteurTrans(TRANSCODE);
 				break;
 
 			case 801: // instruction si : sinon
@@ -306,6 +383,7 @@ public class PtGen {
 				po.produire(0);
 				po.modifier(pileRep.depiler(), po.getIpo() + 1);
 				pileRep.empiler(po.getIpo());
+				modifVecteurTrans(TRANSCODE);
 				break;
 				
 			case 802: // instruction si : fsi
@@ -322,6 +400,7 @@ public class PtGen {
 				po.produire(BSIFAUX);
 				po.produire(0);
 				pileRep.empiler(po.getIpo());
+				modifVecteurTrans(TRANSCODE);
 				break;
 				
 			case 840: // instruction cond : branchement inconditionnel
@@ -329,6 +408,7 @@ public class PtGen {
 				po.produire(BINCOND);
 				po.produire(pileRep.depiler());
 				pileRep.empiler(po.getIpo());
+				modifVecteurTrans(TRANSCODE);
 				break;
 				
 			case 850: // instruction cond : pas de aut
@@ -357,12 +437,14 @@ public class PtGen {
 				po.produire(BSIFAUX);
 				po.produire(0);
 				pileRep.empiler(po.getIpo());
+				modifVecteurTrans(TRANSCODE);
 				break;
 				
 			case 892: // instruction tant que : après tant que
 				po.modifier(pileRep.depiler(), po.getIpo() + 3);
 				po.produire(BINCOND);
 				po.produire(pileRep.depiler());
+				modifVecteurTrans(TRANSCODE);
 				break;
 				
 			// lecture
@@ -389,6 +471,7 @@ public class PtGen {
 					case VARGLOBALE:
 						po.produire(AFFECTERG);
 						po.produire(tabSymb[tabSymb_iCour].info);
+						modifVecteurTrans(TRANSDON);
 						break;
 					case VARLOCALE:
 						po.produire(AFFECTERL);
@@ -473,6 +556,7 @@ public class PtGen {
 					case VARGLOBALE:
 						po.produire(AFFECTERG);
 						po.produire(tabSymb[tabSymb_iAffouappel].info);
+						modifVecteurTrans(TRANSDON);
 						break;
 					case VARLOCALE:
 						po.produire(AFFECTERL);
@@ -514,6 +598,10 @@ public class PtGen {
 				
 				po.produire(APPEL);
 				po.produire(tabSymb[tabSymb_iAffouappel].info);
+				if (tabSymb[tabSymb_iAffouappel + 1].categorie == REF)
+					modifVecteurTrans(REFEXT);
+				else
+					modifVecteurTrans(TRANSCODE);
 				po.produire(tabSymb[tabSymb_iAffouappel+1].info);
 				break;
 				
@@ -538,6 +626,7 @@ public class PtGen {
 					case VARGLOBALE:
 						po.produire(EMPILERADG);
 						po.produire(tabSymb[tabSymb_iCour].info);
+						modifVecteurTrans(TRANSDON);
 						break;
 					case VARLOCALE:
 						po.produire(EMPILERADL);
@@ -658,6 +747,7 @@ public class PtGen {
 					case VARGLOBALE:
 						po.produire(CONTENUG);
 						po.produire(tabSymb[tabSymb_iCour].info);
+						modifVecteurTrans(TRANSDON);
 						break;
 					case VARLOCALE:
 					case PARAMFIXE:
