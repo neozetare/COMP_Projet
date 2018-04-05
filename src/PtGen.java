@@ -109,7 +109,8 @@ public class PtGen {
     // Variables du trinôme
     
     static int tabSymb_nombreVars, tabSymb_nombreParams, tabSymb_iCour, tabSymb_iAffouappel, tabSymb_iParam,
-    	nbParamsFixes, nbParamsMods;
+    	nbParamsFixes, nbParamsMods,
+    	iDef;
    
     // Dï¿½finition de la table des symboles
     //
@@ -185,7 +186,6 @@ public class PtGen {
 		tCour = NEUTRE;
 		
 		tabSymb_nombreVars = 0;
-
 	} // initialisations
 
 	// code des points de generation A COMPLETER
@@ -203,6 +203,57 @@ public class PtGen {
 				afftabSymb();
 				po.constObj();
 				po.constGen();
+				break;
+				
+			// unitprog
+			
+			case 60: // après ident programme
+				desc.setUnite("programme");
+				break;
+				
+			case 70: // après déclarations
+				//po.modifier(pileRep.depiler(), po.getIpo() + 1);
+				afftabSymb();
+				break;
+				
+			case 80:
+				desc.setTailleCode(po.getIpo());
+				desc.ecrireDesc(UtilLex.nomSource);
+				break;
+				
+			// unitmodule
+			
+			case 120: // après ident module
+				desc.setUnite("module");
+				break;
+				
+			// partiedef
+				
+			case 210:
+				desc.ajoutDef(UtilLex.repId(UtilLex.numId));
+				break;
+
+			// specif
+			
+			case 270:
+				desc.ajoutRef(UtilLex.repId(UtilLex.numId));
+				placeIdent(UtilLex.numId, PROC, NEUTRE, desc.getNbRef());
+				placeIdent(-1, REF, NEUTRE, -1);
+				
+				tabSymb_nombreParams = 0;
+				break;
+			
+			case 271:
+				placeIdent(-1, PARAMFIXE, tCour, tabSymb_nombreParams++);
+				break;
+				
+			case 280:
+				placeIdent(-1, PARAMMOD, tCour, tabSymb_nombreParams++);
+				break;
+				
+			case 281:
+				tabSymb[it-tabSymb_nombreParams].info = tabSymb_nombreParams;
+				desc.modifRefNbParam(desc.getNbRef(), tabSymb_nombreParams);
 				break;
 				
 			// consts
@@ -226,8 +277,11 @@ public class PtGen {
 				break;
 				
 			case 341: // après déclarations de variables
-				po.produire(RESERVER);
-				po.produire(tabSymb_nombreVars);
+				if (desc.getUnite().equals("programme")) {
+					po.produire(RESERVER);
+					po.produire(tabSymb_nombreVars);
+				}
+				desc.setTailleGlobaux(tabSymb_nombreVars);
 				break;
 				
 			// type
@@ -254,11 +308,16 @@ public class PtGen {
 				
 			// decproc
 				
-			case 440: // déclaration de procédure : identificateur de procédure
+			case 440: // déclaration de procédure : identificateur de procédure				
 				if (presentIdent(1) != 0)
 					UtilLex.messErr("Déclaration incorrecte : Identificateur \"" + UtilLex.repId(UtilLex.numId) + "\" déjà utilisé");
 				placeIdent(UtilLex.numId, PROC, NEUTRE, po.getIpo() + 1);
-				placeIdent(-1, PRIVEE, NEUTRE, 0);
+				
+				if ((iDef = desc.presentDef(UtilLex.repId(UtilLex.numId))) != 0) {
+					desc.modifDefAdPo(iDef, po.getIpo() + 1);
+					placeIdent(-1, DEF, NEUTRE, 0);
+				} else placeIdent(-1, PRIVEE, NEUTRE, 0);
+				
 				bc = it + 1;
 				tabSymb_nombreParams = 0;
 				tabSymb_nombreVars = 0;
@@ -266,6 +325,9 @@ public class PtGen {
 				
 			case 441: // déclaration de procédure : après paramètres
 				tabSymb[bc-1].info = tabSymb_nombreParams;
+
+				if (iDef != 0)
+					desc.modifDefNbParam(iDef, tabSymb_nombreParams);
 				break;
 				
 			case 442: // après déclaration de procédure
@@ -281,15 +343,13 @@ public class PtGen {
 			// pf
 				
 			case 570: // déclaration de paramètre fixe
-				placeIdent(UtilLex.numId, PARAMFIXE, tCour, tabSymb_nombreParams);
-				tabSymb_nombreParams++;
+				placeIdent(UtilLex.numId, PARAMFIXE, tCour, tabSymb_nombreParams++);
 				break;
 				
 			// pm
 				
 			case 630: // déclaration de paramètre mod
-				placeIdent(UtilLex.numId, PARAMMOD, tCour, tabSymb_nombreParams);
-				tabSymb_nombreParams++;
+				placeIdent(UtilLex.numId, PARAMMOD, tCour, tabSymb_nombreParams++);
 				break;
 
 			// inssi
